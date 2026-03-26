@@ -19,7 +19,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                docker build -t my-node-k8s-app:${BUILD_NUMBER} .
+                docker build -t my-node-k8s-app:latest .
                 '''
             }
         }
@@ -45,7 +45,7 @@ pipeline {
             steps {
                 sh '''
                 # Load latest image into Minikube
-                minikube image load my-node-k8s-app:${BUILD_NUMBER}
+                minikube image load my-node-k8s-app:latest
 
                 # Apply manifests
                 minikube kubectl -- apply -f k8s/deployment.yaml
