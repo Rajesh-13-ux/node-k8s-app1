@@ -3,13 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout from GitHub') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/Rajesh-13-ux/node-k8s-app1'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
@@ -24,12 +17,6 @@ pipeline {
             }
         }
 
-        // stage('Push Docker Image') {
-        //     steps {
-        //         sh 'docker push laxmi916/my-k8s-app:latest'
-        //     }
-        // }
-
         stage('Start Minikube if not running') {
             steps {
                 sh '''
@@ -41,16 +28,25 @@ pipeline {
             }
         }
 
+        stage('Load Image into Minikube') {
+            steps {
+                sh '''
+                minikube image load my-node-k8s-app:latest
+                '''
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                # Load latest image into Minikube
-                minikube image load my-node-k8s-app:latest
-
-                # Apply manifests
                 minikube kubectl -- apply -f k8s/deployment.yaml
                 minikube kubectl -- apply -f k8s/service.yaml
-                minikube service my-node-k8s-app-service
+
+                # Restart pods to use latest image
+                minikube kubectl -- rollout restart deployment my-node-k8s-app-deployment
+
+                # Show service URL (non-blocking)
+                minikube service my-node-k8s-app-service --url
                 '''
             }
         }
