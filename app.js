@@ -9,7 +9,7 @@ app.get('/', (req, res) => {
   res.send(`Sum is: ${sum}`);
 });
 
-// App listens on port 8080
+// App listens on port s
 app.listen(3000, () => {
-  console.log("Server running on port 8080");
+  console.log("Server running on port 3000");
 });

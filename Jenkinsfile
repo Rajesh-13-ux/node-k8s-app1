@@ -5,8 +5,8 @@ pipeline {
 
         stage('Checkout from GitHub') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/laxmi916/node-k8s-app.git'
+                git branch: 'main',
+                    url: 'https://github.com/Rajesh-13-ux/node-k8s-app1'
             }
         }
 
@@ -19,17 +19,16 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                docker build -t my-k8s-app:${BUILD_NUMBER} .
-                docker tag my-k8s-app:${BUILD_NUMBER} laxmi916/my-k8s-app:latest
+                docker build -t my-node-k8s-app:${BUILD_NUMBER} .
                 '''
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                sh 'docker push laxmi916/my-k8s-app:latest'
-            }
-        }
+        // stage('Push Docker Image') {
+        //     steps {
+        //         sh 'docker push laxmi916/my-k8s-app:latest'
+        //     }
+        // }
 
         stage('Start Minikube if not running') {
             steps {
@@ -46,7 +45,7 @@ pipeline {
             steps {
                 sh '''
                 # Load latest image into Minikube
-                # minikube image load laxmi916/my-k8s-app:latest
+                minikube image load my-node-k8s-app:${BUILD_NUMBER}
 
                 # Apply manifests
                 minikube kubectl -- apply -f k8s/deployment.yaml
